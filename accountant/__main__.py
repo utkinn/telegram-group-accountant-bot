@@ -1,10 +1,22 @@
 import os
 
 from dotenv import load_dotenv
-from telegram.ext import ApplicationBuilder, CommandHandler, PicklePersistence
+from telegram.ext import (
+    Application,
+    ApplicationBuilder,
+    CommandHandler,
+    PicklePersistence,
+)
 
+from .command import descriptions as command_descriptions
 from .command.help import help
 from .command.new import new
+from .command.count import count
+from .command.info import info
+from .command.rename import rename
+from .command.spend import spend
+from .command.unspend import unspend
+from .command.cancel import cancel
 
 
 def main():
@@ -15,11 +27,22 @@ def main():
         ApplicationBuilder()
         .token(token)
         .persistence(PicklePersistence(get_persistence_file_path()))
+        .post_init(post_init)
         .build()
     )
     app.add_handler(CommandHandler("help", help))
     app.add_handler(CommandHandler("new", new))
+    app.add_handler(CommandHandler("count", count))
+    app.add_handler(CommandHandler("info", info))
+    app.add_handler(CommandHandler("rename", rename))
+    app.add_handler(CommandHandler("spend", spend))
+    app.add_handler(CommandHandler("unspend", unspend))
+    app.add_handler(CommandHandler("cancel", cancel))
     app.run_polling()
+
+
+async def post_init(application: Application) -> None:
+    await application.bot.set_my_commands(command_descriptions.items())
 
 
 def get_token():
