@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from telegram import BotCommandScopeAllGroupChats
 from telegram.ext import (
     Application,
     ApplicationBuilder,
@@ -9,14 +10,14 @@ from telegram.ext import (
 )
 
 from .command import descriptions as command_descriptions
-from .command.help import help
-from .command.new import new
+from .command.cancel import cancel
 from .command.count import count
+from .command.help import help
 from .command.info import info
+from .command.new import new
 from .command.rename import rename
 from .command.spend import spend
 from .command.unspend import unspend
-from .command.cancel import cancel
 
 
 def main():
@@ -42,7 +43,9 @@ def main():
 
 
 async def post_init(application: Application) -> None:
-    await application.bot.set_my_commands(command_descriptions.items())
+    await application.bot.set_my_commands(
+        command_descriptions.items(), BotCommandScopeAllGroupChats()
+    )
 
 
 def get_token():
