@@ -12,7 +12,7 @@ from ._util import chat_type
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not context.chat_data.get("collection"):
         await update.effective_chat.send_message(
-            "🤔 Никакого сбора не было объявлено.\n\n/help@PiuAccountantBot"
+            f"🤔 Никакого сбора не было объявлено.\n\n/help@{context.bot.username}"
         )
         return
 

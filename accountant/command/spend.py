@@ -16,17 +16,17 @@ async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         price = int(price)
     except IndexError:
         await update.effective_chat.send_message(
-            "🤔 Не понял, что ты купил. Попробуй ещё раз.\n\n/help@PiuAccountantBot"
+            f"🤔 Не понял, что ты купил. Попробуй ещё раз.\n\n/help@{context.bot.username}"
         )
         return
     except ValueError:
         await update.effective_chat.send_message(
-            "🤔 Не понял, сколько это стоило. Попробуй ещё раз.\n\n/help@PiuAccountantBot"
+            f"🤔 Не понял, сколько это стоило. Попробуй ещё раз.\n\n/help@{context.bot.username}"
         )
         return
     if price < 0:
         await update.effective_chat.send_message(
-            "🤔 Не понял, сколько это стоило. Попробуй ещё раз.\n\n/help@PiuAccountantBot"
+            f"🤔 Не понял, сколько это стоило. Попробуй ещё раз.\n\n/help@{context.bot.username}"
         )
         return
 
@@ -44,14 +44,14 @@ async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.effective_chat.send_message(
         f"✍️ Занес твою трату на {item_name} за {price} ₽."
         + (
-            f"""\n\nСбор не был объявлен. Я создал его за тебя и назвал его "{collection.name}". Можешь дать ему название командой "/rename@PiuAccountantBot название".
+            f"""\n\nСбор не был объявлен. Я создал его за тебя и назвал его "{collection.name}". Можешь дать ему название командой "/rename@{context.bot.username} название".
             
 *Ребятам, кто на что-то потратился* — добавляйте расходы таким образом:
-/spend@PiuAccountantBot Ром 100
+/spend@{context.bot.username} Ром 100
 *Команду вызывает только тот, кто потратился. Иначе деньги уйдут не тому человеку.*
 
 И, в самом конце, когда настанет время распределять, один из вас должен указать, кто скидывается:
-/count@PiuAccountantBot @foo @bar @baz
+/count@{context.bot.username} @foo @bar @baz
 Сюда можно вписывать либо @меншены, либо просто имена."""
             if collection_just_created
             else ""

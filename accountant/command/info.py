@@ -13,7 +13,7 @@ async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     collection: Collection | None = context.chat_data.get("collection")
     if not collection:
         await update.effective_chat.send_message(
-            "🤔 Никакого сбора не было объявлено.\n\n/help@PiuAccountantBot"
+            f"🤔 Никакого сбора не было объявлено.\n\n/help@{context.bot.username}"
         )
         return
 

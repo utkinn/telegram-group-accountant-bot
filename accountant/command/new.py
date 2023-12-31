@@ -14,9 +14,9 @@ async def new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.effective_chat.send_message(
             f"""🤔 Уже объявлен сбор *"{context.chat_data['collection'].name}"*. Рассчитай текущий сбор с помощью
             
-/count@PiuAccountantBot @foo @bar @baz
+/count@{context.bot.username} @foo @bar @baz
 
-либо отмени его с помощью /cancel@PiuAccountantBot""",
+либо отмени его с помощью /cancel@{context.bot.username}""",
             parse_mode=ParseMode.MARKDOWN,
         )
         return
@@ -24,7 +24,7 @@ async def new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     collection_name = " ".join(context.args)
     if not collection_name.strip():
         await update.effective_chat.send_message(
-            "🤔 Не понял название сбора. Попробуй ещё раз:\n\n/new@PiuAccountantBot название"
+            f"🤔 Не понял название сбора. Попробуй ещё раз:\n\n/new@{context.bot.username} название"
         )
         return
 
@@ -34,11 +34,11 @@ async def new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         f"""🎩 Я создал сбор с названием *{collection_name}*.
 
 Ребятам, кто на что-то потратился — добавляйте расходы таким образом:
-/spend@PiuAccountantBot Ром 100
+/spend@{context.bot.username} Ром 100
 *Команду вызывает только тот, кто потратился. Иначе деньги уйдут не тому человеку.*
 
 И, в самом конце, когда настанет время распределять, один из вас должен указать, кто скидывается:
-/count@PiuAccountantBot @foo @bar @baz
+/count@{context.bot.username} @foo @bar @baz
 Сюда можно вписывать либо @меншены, либо просто имена.""",
         parse_mode=ParseMode.MARKDOWN,
     )
