@@ -4,7 +4,6 @@ from telegram import Update
 from telegram.constants import ChatType
 from telegram.ext import ContextTypes
 
-from ..model.collection import Collection
 from ._util import chat_type
 
 

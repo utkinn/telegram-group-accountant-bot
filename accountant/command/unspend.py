@@ -1,7 +1,5 @@
-from pathlib import Path
-
 from telegram import Update
-from telegram.constants import ChatType, ParseMode
+from telegram.constants import ChatType
 from telegram.ext import ContextTypes
 
 from ..model.collection import Collection
