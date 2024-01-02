@@ -4,7 +4,7 @@ from telegram import Update
 from telegram.constants import ChatType, ParseMode
 from telegram.ext import ContextTypes
 
-from ..model.collection import Collection
+from ..model.collection import Collection, Invoice
 from ._util import chat_type
 
 
@@ -54,8 +54,7 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     payers = list(sorted(set(context.args)))
     formatted_payers = "\n".join(f"- {user_name}" for user_name in payers)
     formatted_payees = "\n".join(
-        f"- Подайте @{invoice.payee_user_name} по {floor(invoice.amount)} ₽"
-        for invoice in invoices
+        _format_payee(invoice, context.bot_data) for invoice in invoices
     )
 
     # TODO: requisites
@@ -78,3 +77,12 @@ _Если все в порядке, закройте сбор командой_\
 _Если затесался неправильный расход, уберите его командой /unspend@{context.bot.username} <номер>._""",
         parse_mode=ParseMode.MARKDOWN,
     )
+
+
+def _format_payee(invoice: Invoice, bot_data: dict) -> str:
+    result = f"- Подайте @{invoice.payee_user_name} по {floor(invoice.amount)} ₽"
+    requisite = bot_data.get("requisites", {}).get(invoice.payee_user_name)
+    bank = bot_data.get("preferred_banks", {}).get(invoice.payee_user_name)
+    if requisite or bank:
+        result += " (" + ", ".join(filter(None, [requisite, bank])) + ")"
+    return result

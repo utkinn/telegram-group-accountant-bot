@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from telegram import BotCommandScopeAllGroupChats
+from telegram import BotCommandScopeAllGroupChats, BotCommandScopeAllPrivateChats
 from telegram.ext import (
     Application,
     ApplicationBuilder,
@@ -9,14 +9,17 @@ from telegram.ext import (
     PicklePersistence,
 )
 
-from .command import descriptions as command_descriptions
+from .command import group_descriptions as group_command_descriptions
+from .command import private_descriptions as private_command_descriptions
 from .command.cancel import cancel
 from .command.count import count
 from .command.help import help
 from .command.info import info
 from .command.new import new
 from .command.rename import rename
+from .command.requisites import conv_handler as requisites_conv_handler
 from .command.spend import spend
+from .command.start import start
 from .command.unspend import unspend
 
 
@@ -31,20 +34,29 @@ def main():
         .post_init(post_init)
         .build()
     )
-    app.add_handler(CommandHandler("help", help))
-    app.add_handler(CommandHandler("new", new))
-    app.add_handler(CommandHandler("count", count))
-    app.add_handler(CommandHandler("info", info))
-    app.add_handler(CommandHandler("rename", rename))
-    app.add_handler(CommandHandler("spend", spend))
-    app.add_handler(CommandHandler("unspend", unspend))
-    app.add_handler(CommandHandler("cancel", cancel))
+    app.add_handlers(
+        [
+            CommandHandler("help", help),
+            CommandHandler("new", new),
+            CommandHandler("count", count),
+            CommandHandler("info", info),
+            CommandHandler("rename", rename),
+            CommandHandler("spend", spend),
+            CommandHandler("unspend", unspend),
+            CommandHandler("cancel", cancel),
+            CommandHandler("start", start),
+            requisites_conv_handler,
+        ]
+    )
     app.run_polling()
 
 
 async def post_init(application: Application) -> None:
     await application.bot.set_my_commands(
-        command_descriptions.items(), BotCommandScopeAllGroupChats()
+        group_command_descriptions.items(), BotCommandScopeAllGroupChats()
+    )
+    await application.bot.set_my_commands(
+        private_command_descriptions.items(), BotCommandScopeAllPrivateChats()
     )
 
 
