@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from telegram import Update
@@ -11,7 +12,8 @@ from ._util import GROUP_LIKE, chat_type
 @chat_type(GROUP_LIKE)
 async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
-        (*item_name, price) = context.args
+        args_without_mentions = re.sub(r"@\w+", "", " ".join(context.args)).split()
+        (*item_name, price) = args_without_mentions
         item_name = " ".join(item_name)
         price = int(price)
     except IndexError:
@@ -30,6 +32,13 @@ async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    mentions = re.findall(r"@\w+", " ".join(context.args))
+    if len(mentions) > 1:
+        await update.effective_chat.send_message(
+            "🤔 Можно указать лишь одного потратившегося."
+        )
+        return
+
     collection_just_created = False
     if not context.chat_data.get("collection"):
         collection_just_created = True
@@ -38,11 +47,13 @@ async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     collection: Collection = context.chat_data["collection"]
     context.chat_data["collection"] = collection.with_new_spend(
-        Spend(item_name, price, update.effective_user.username)
+        Spend(item_name, price, update.effective_user.username if not mentions else mentions[0].lstrip("@"))
     )
 
+    whose_spend = "твою трату" if not mentions else f"трату {mentions[0]}"
+
     await update.effective_chat.send_message(
-        f"✍️ Занес твою трату на {item_name} за {price} ₽."
+        f"✍️ Занес {whose_spend} на {item_name} за {price} ₽."
         + (
             f"""\n\nСбор не был объявлен. Я создал его за тебя и назвал его "{collection.name}". Можешь дать ему название командой "/rename@{context.bot.username} название".
             
