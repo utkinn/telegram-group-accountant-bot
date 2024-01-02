@@ -53,9 +53,7 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     payers = list(sorted(set(context.args)))
     formatted_payers = "\n".join(f"- {user_name}" for user_name in payers)
-    formatted_payees = "\n".join(
-        _format_payee(invoice, context.bot_data) for invoice in invoices
-    )
+    formatted_payees = _format_payees(context, invoices, context.bot_data)
 
     # TODO: requisites
     await update.effective_chat.send_message(
@@ -74,9 +72,33 @@ _Дамы и господа, подайте кто-нибудь. Кто скол
 
 _Перепроверьте, что все расходы занесены и все участники сбора указаны._
 _Если все в порядке, закройте сбор командой_\n/cancel@{context.bot.username}.
-_Если затесался неправильный расход, уберите его командой /unspend@{context.bot.username} <номер>._""",
+_Если затесался неправильный расход, уберите его командой /unspend@{context.bot.username} <номер>,
+занесите правильный и вызовите /count@{context.bot.username} еще раз._""",
         parse_mode=ParseMode.MARKDOWN,
     )
+
+
+def _format_payees(
+    context: ContextTypes.DEFAULT_TYPE, invoices: list[Invoice], bot_data: dict
+):
+    result = "\n".join(_format_payee(invoice, context.bot_data) for invoice in invoices)
+    payee_user_names = list(
+        sorted(set(invoice.payee_user_name for invoice in invoices))
+    )
+    payee_user_names_without_requisites = [
+        username
+        for username in payee_user_names
+        if not bot_data.get("requisites", {}).get(username)
+    ]
+    if payee_user_names_without_requisites:
+        result += (
+            "\n\n👋 "
+            + ", ".join(
+                "@" + username for username in payee_user_names_without_requisites
+            )
+            + ", предлагаю сходить ко мне в личку и указать реквизиты, куда переводить тебе деньги. Так будет удобнее 😉"
+        )
+    return result
 
 
 def _format_payee(invoice: Invoice, bot_data: dict) -> str:
