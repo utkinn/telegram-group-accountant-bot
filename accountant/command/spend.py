@@ -58,8 +58,9 @@ async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"""\n\nСбор не был объявлен. Я создал его за тебя и назвал его "{collection.name}". Можешь дать ему название командой "/rename@{context.bot.username} название".
             
 *Ребятам, кто на что-то потратился* — добавляйте расходы таким образом:
-/spend@{context.bot.username} Ром 100
-*Команду вызывает только тот, кто потратился. Иначе деньги уйдут не тому человеку.*
+
+Если тратил ты: /spend@{context.bot.username} Ром 100
+Если тратил кто-то другой: /spend@{context.bot.username} Ром 100 @SpenderUserName
 
 И, в самом конце, когда все расходы занесены и настанет время распределять, один из вас должен указать, кто скидывается:
 /count@{context.bot.username} @foo @bar @baz
