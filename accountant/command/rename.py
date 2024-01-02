@@ -1,11 +1,10 @@
 from telegram import Update
-from telegram.constants import ChatType
 from telegram.ext import ContextTypes
 
-from ._util import chat_type
+from ._util import GROUP_LIKE, chat_type
 
 
-@chat_type(ChatType.GROUP)
+@chat_type(GROUP_LIKE)
 async def rename(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     new_name = " ".join(context.args)
     if not new_name.strip():

@@ -1,14 +1,14 @@
 from math import floor
 
 from telegram import Update
-from telegram.constants import ChatType, ParseMode
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from ..model.collection import Collection, Invoice
-from ._util import chat_type
+from ._util import GROUP_LIKE, chat_type
 
 
-@chat_type(ChatType.GROUP)
+@chat_type(GROUP_LIKE)
 async def count(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not context.args:
         await update.effective_chat.send_message(

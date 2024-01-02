@@ -1,12 +1,12 @@
 from telegram import Update
-from telegram.constants import ChatType, ParseMode
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from ..model.collection import Collection
-from ._util import chat_type
+from ._util import GROUP_LIKE, chat_type
 
 
-@chat_type(ChatType.GROUP)
+@chat_type(GROUP_LIKE)
 async def new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.chat_data.get("collection"):
         await update.effective_chat.send_message(

@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from telegram import Update
-from telegram.constants import ChatType, ParseMode
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
 from ..model.collection import Collection, Spend
-from ._util import chat_type
+from ._util import GROUP_LIKE, chat_type
 
 
-@chat_type(ChatType.GROUP)
+@chat_type(GROUP_LIKE)
 async def spend(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         (*item_name, price) = context.args
