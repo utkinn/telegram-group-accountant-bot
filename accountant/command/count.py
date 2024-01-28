@@ -58,8 +58,12 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     formatted_payers = "\n".join(f"- {user_name}" for user_name in payers)
     formatted_payees = _format_payees(context, invoices, context.bot_data)
 
-    # TODO: requisites
-    await update.effective_chat.send_message(
+    if "last_count_message_id" in context.chat_data:
+        await context.bot.delete_message(
+            update.effective_chat.id, context.chat_data["last_count_message_id"]
+        )
+
+    message = await update.effective_chat.send_message(
         f"""*🤑 Настал час расплаты за {collection.name}!*
 _Дамы и господа, подайте кто-нибудь. Кто сколько может. 🎩_
 Сбор создан {collection.created_at.strftime("%d.%m.%Y")}
@@ -79,6 +83,7 @@ _Если затесался неправильный расход, уберит
 занесите правильный и вызовите /count@{context.bot.username} еще раз._""",
         parse_mode=ParseMode.MARKDOWN,
     )
+    context.chat_data["last_count_message_id"] = message.id
 
 
 def _format_payees(
